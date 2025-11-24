@@ -6,24 +6,22 @@ on:
       - 'main'
   pull_request:
     types:
-      - closed   # Se activa cuando se cierra un PR (incluye merges)
+      - closed
 
 jobs:
   release:
-    # Solo ejecutar si:
-    # - es un push directo a main
-    # - O un PR que fue mergeado a main
     if: >
-      github.ref == 'refs/heads/main' ||
-      (github.event.pull_request.merged == true &&
-       github.event.pull_request.base.ref == 'main')
+      !contains(github.event.head_commit.message, '[skip ci]') &&
+      (github.ref == 'refs/heads/main' ||
+       (github.event.pull_request.merged == true &&
+        github.event.pull_request.base.ref == 'main'))
 
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write        # Para subir CHANGELOG y tags
-      issues: write          # Para crear release notes si se usan issues
-      pull-requests: write   # Opcional
+      contents: write
+      issues: write
+      pull-requests: write
 
     steps:
       - name: Checkout repository
