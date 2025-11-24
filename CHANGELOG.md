@@ -1,5 +1,12 @@
 # Changelog
 
+# [1.1.0](https://github.com/KarlaVirtual/Front4/compare/v1.0.0...v1.1.0) (2025-11-24)
+
+
+### Features
+
+* (VSFT-0000)-PruebaDeployFront4 (d521d4e2ab93dedd25117df95aa89cad0d7e49ee)
+
 # 1.0.0 (2025-11-24)
 
 
