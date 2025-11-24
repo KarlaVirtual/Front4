@@ -1,0 +1,45 @@
+name: versionado
+
+on:
+  push:
+    branches:
+      - 'main'
+  pull_request:
+    types:
+      - closed   # Se activa cuando se cierra un PR (incluye merges)
+
+jobs:
+  release:
+    # Solo ejecutar si:
+    # - es un push directo a main
+    # - O un PR que fue mergeado a main
+    if: >
+      github.ref == 'refs/heads/main' ||
+      (github.event.pull_request.merged == true &&
+       github.event.pull_request.base.ref == 'main')
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write        # Para subir CHANGELOG y tags
+      issues: write          # Para crear release notes si se usan issues
+      pull-requests: write   # Opcional
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '21'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run semantic-release
+        run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
