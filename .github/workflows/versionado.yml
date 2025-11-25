@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - 'main'
+    tags-ignore:
+      - 'v*'          # ⬅️ evita doble ejecución por tags del release
   pull_request:
     types:
       - closed
