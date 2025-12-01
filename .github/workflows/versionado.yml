@@ -1,0 +1,45 @@
+name: versionado
+
+on:
+  push:
+    branches:
+      - 'main'
+    tags-ignore:
+      - 'v*'          # ⬅️ evita doble ejecución por tags del release
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  release:
+    if: >
+      !contains(github.event.head_commit.message, '[skip ci]') &&
+      (github.ref == 'refs/heads/main' ||
+       (github.event.pull_request.merged == true &&
+        github.event.pull_request.base.ref == 'main'))
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '21'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run semantic-release
+        run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
